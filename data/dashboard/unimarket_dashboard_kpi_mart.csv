@@ -1,0 +1,27 @@
+﻿kpi,value,unit,classification,interpretation
+item_detail_records,1964.0,records,scope,Filas de producto preservadas en la capa final
+gross_sales,2022521.5099999998,CAD,reported_financial_kpi,Ventas brutas del detalle
+net_sales,1984356.1,CAD,reported_financial_kpi,Ventas netas del detalle
+net_sales_realization_rate,98.11297878359773,percent,revenue_efficiency,Porcentaje de ventas brutas convertido en ventas netas
+gross_to_net_reduction,38165.41000000003,CAD,confirmed_revenue_reduction,Reducción registrada entre Gross Sales y Net Sales
+discount_reduction,35985.200000000004,CAD,confirmed_revenue_reduction,Descuentos registrados
+refund_reduction,2379.25,CAD,confirmed_revenue_reduction,Refunds registrados
+repayment_recovery,199.04,CAD,revenue_recovery,Repayments que compensan parcialmente reducciones
+validated_margin_net_sales,1786129.89,CAD,validated_profitability,Ventas con COGS positivo y utilidad consistente
+validated_weighted_gross_margin,47.839174227133064,percent,validated_profitability,Margen bruto ponderado del alcance validado
+positive_sales_outside_validated_margin,198318.28000000003,CAD,profitability_control_exposure,Ventas positivas fuera del margen validado; no constituyen pérdida confirmada
+positive_sales_outside_validated_margin_pct,9.993623567402118,percent,profitability_control_exposure,Participación de ventas positivas fuera del alcance validado
+missing_profitability_sales_exposure,91755.86000000002,CAD,data_quality_exposure,Ventas positivas sin COGS y Gross Profit completos
+zero_cogs_sales_exposure,90334.98,CAD,data_quality_exposure,Ventas positivas con COGS reportado igual a cero
+configuration_anomaly_sales_exposure,16227.440000000002,CAD,configuration_exposure,Ventas asociadas a inconsistencias entre COGS y Gross Profit
+net_cogs_configuration_gap,6407.469999999999,CAD,configuration_gap,Brecha neta entre COGS reportado e implícito
+absolute_cogs_configuration_gap,6638.429999999999,CAD,configuration_gap,Magnitud absoluta de brechas de configuración
+negative_margin_records,31.0,records,reported_profitability_issue,Productos validados con Gross Profit negativo
+absolute_negative_gross_profit,562.93,CAD,reported_negative_gross_profit,Valor absoluto de la utilidad bruta negativa reportada
+negative_margin_created_by_reduction,28.0,records,root_cause_candidate,Márgenes negativos creados después de descuentos/refunds
+low_margin_records,65.0,records,margin_review,Productos validados por debajo del umbral IQR
+low_margin_compressed_by_reduction,40.0,records,root_cause_candidate,Márgenes bajos comprimidos por reducciones de ingreso
+catalog_actionable_records,108.0,records,catalog_control,Registros que requieren revisión de SKU/UPC/presentación
+catalog_actionable_sales_associated,47087.0,CAD,catalog_control,Ventas positivas asociadas a candidatos accionables
+manual_negative_adjustment_records,16.0,records,manual_adjustment_control,Transacciones manuales con saldo neto negativo
+manual_negative_adjustment_amount,92.07000000000001,CAD,manual_adjustment_control,Valor absoluto de ajustes manuales negativos

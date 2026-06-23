@@ -1,0 +1,48 @@
+{
+  "project": "UNIMARKET LATIN FOOD",
+  "generated_at": "2026-06-19T20:52:51.886130",
+  "primary_product_file": "unimarket_dashboard_product_mart.csv",
+  "category_file": "unimarket_dashboard_category_mart.csv",
+  "finding_file": "unimarket_dashboard_finding_mart.csv",
+  "kpi_file": "unimarket_dashboard_kpi_mart.csv",
+  "priority_file": "unimarket_dashboard_priority_queue.csv",
+  "recommended_pages": [
+    {
+      "page": "Executive Overview",
+      "purpose": "Sales, revenue realization, validated margin, control exposures and top priorities"
+    },
+    {
+      "page": "Revenue Reductions",
+      "purpose": "Discounts, refunds, repayments, outliers and products affected"
+    },
+    {
+      "page": "Profitability",
+      "purpose": "Validated margin, negative/low margin, zero COGS, missing costs and anomalies"
+    },
+    {
+      "page": "Catalog Control",
+      "purpose": "Duplicate candidates, pack/size findings, label standardization and manual transactions"
+    },
+    {
+      "page": "Priority Queue",
+      "purpose": "Actionable product-level queue with evidence and recommended action"
+    }
+  ],
+  "recommended_filters": [
+    "category_context",
+    "Name",
+    "final_audit_priority",
+    "corrected_profitability_scope_status",
+    "corrected_margin_alert_type",
+    "revenue_reduction_type",
+    "presentation_type_corrected",
+    "catalog_finding_class",
+    "catalog_audit_priority_corrected"
+  ],
+  "guardrails": [
+    "Do not present missing/zero COGS exposure as confirmed loss.",
+    "Do not add different finding amounts into a single loss total.",
+    "Do not merge duplicate candidates without SKU/UPC and presentation validation.",
+    "Use validated positive-COGS scope for reported gross margin."
+  ]
+}
