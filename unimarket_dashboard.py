@@ -413,7 +413,9 @@ def load_csv(path: str) -> pd.DataFrame:
     return pd.read_csv(p)
 
 
-def load_data() -> dict[str, pd.DataFrame]:`r`n    root = APP_ROOT`r`n    dash = root / "data" / "dashboard"
+def load_data(root: Path | None = None) -> dict[str, pd.DataFrame]:
+    root = APP_ROOT
+    dash = root / "data" / "dashboard"
     outputs = root / "outputs" / "csv"
 
     product = load_csv(str(dash / "unimarket_dashboard_product_mart.csv"))
@@ -1263,4 +1265,5 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
 
