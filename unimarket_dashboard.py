@@ -1,8 +1,8 @@
-
+﻿
 # -*- coding: utf-8 -*-
 """
-UNIMARKET LATIN FOOD · Decision Dashboard
-Versión corregida: mejora de visibilidad en gráficas de rentabilidad.
+UNIMARKET LATIN FOOD Â· Decision Dashboard
+VersiÃ³n corregida: mejora de visibilidad en grÃ¡ficas de rentabilidad.
 Ejecutar:
     streamlit run dashboard/unimarket_dashboard.py
 
@@ -16,6 +16,8 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+
+APP_ROOT = Path(__file__).resolve().parent
 from typing import Iterable
 
 import pandas as pd
@@ -24,12 +26,12 @@ import streamlit as st
 
 
 # ============================================================
-# CONFIGURACIÓN GENERAL
+# CONFIGURACIÃ“N GENERAL
 # ============================================================
 
 st.set_page_config(
     page_title="UNIMARKET Intelligence Dashboard",
-    page_icon="📊",
+    page_icon="ðŸ“Š",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -275,8 +277,8 @@ def first_existing(df: pd.DataFrame, candidates: Iterable[str]) -> str | None:
 
 def clean_priority(value: object) -> str:
     s = str(value).strip().lower()
-    if s in {"critical", "critico", "crítico"}:
-        return "Crítica"
+    if s in {"critical", "critico", "crÃ­tico"}:
+        return "CrÃ­tica"
     if s in {"high", "alto", "alta"}:
         return "Alta"
     if s in {"medium", "medio", "media"}:
@@ -292,13 +294,13 @@ def profitability_label(row: pd.Series) -> str:
     status = str(row.get("corrected_profitability_scope_status", "")).lower()
 
     if pd.notna(gp) and gp < 0:
-        return "Pérdida / utilidad negativa"
+        return "PÃ©rdida / utilidad negativa"
     if pd.isna(cogs):
         return "Sin costo registrado"
     if cogs == 0 and pd.to_numeric(row.get("net_sales_final", 0), errors="coerce") > 0:
         return "COGS cero"
     if "configuration" in status or "anomaly" in status:
-        return "Anomalía de configuración"
+        return "AnomalÃ­a de configuraciÃ³n"
     margin = pd.to_numeric(row.get("gross_margin_pct_final", None), errors="coerce")
     if pd.notna(margin) and margin < 23:
         return "Margen bajo"
@@ -308,7 +310,7 @@ def profitability_label(row: pd.Series) -> str:
 def format_table(df: pd.DataFrame) -> pd.DataFrame:
     """
     Devuelve una tabla limpia para Streamlit sin nombres de columnas duplicados.
-    El error anterior ocurría porque algunos CSV ya traían columnas traducidas
+    El error anterior ocurrÃ­a porque algunos CSV ya traÃ­an columnas traducidas
     como "Refunds" y al renombrar "refund_reduction_final" se generaban dos columnas
     con el mismo nombre. PyArrow/Streamlit no permite columnas duplicadas.
     """
@@ -321,12 +323,12 @@ def format_table(df: pd.DataFrame) -> pd.DataFrame:
     out = out.loc[:, ~out.columns.duplicated()].copy()
 
     rename = {
-        "category_context": "Categoría",
+        "category_context": "CategorÃ­a",
         "Name": "Producto",
         "gross_sales_final": "Ventas brutas",
         "net_sales_final": "Ventas netas",
         "sold_final": "Unidades vendidas",
-        "gross_to_net_reduction_final": "Reducción bruta a neta",
+        "gross_to_net_reduction_final": "ReducciÃ³n bruta a neta",
         "discount_reduction_final": "Descuentos",
         "refund_reduction_final": "Refunds",
         "cogs_final": "COGS / costo",
@@ -338,16 +340,16 @@ def format_table(df: pd.DataFrame) -> pd.DataFrame:
 
     out = out.rename(columns={k: v for k, v in rename.items() if k in out.columns})
 
-    # Eliminar columnas duplicadas DESPUÉS del rename.
+    # Eliminar columnas duplicadas DESPUÃ‰S del rename.
     out = out.loc[:, ~out.columns.duplicated()].copy()
 
     visible_cols = [
-        "Categoría",
+        "CategorÃ­a",
         "Producto",
         "Ventas brutas",
         "Ventas netas",
         "Unidades vendidas",
-        "Reducción bruta a neta",
+        "ReducciÃ³n bruta a neta",
         "Descuentos",
         "Refunds",
         "COGS / costo",
@@ -366,7 +368,7 @@ def format_table(df: pd.DataFrame) -> pd.DataFrame:
     for col in [
         "Ventas brutas",
         "Ventas netas",
-        "Reducción bruta a neta",
+        "ReducciÃ³n bruta a neta",
         "Descuentos",
         "Refunds",
         "COGS / costo",
@@ -411,8 +413,7 @@ def load_csv(path: str) -> pd.DataFrame:
     return pd.read_csv(p)
 
 
-def load_data(root: Path) -> dict[str, pd.DataFrame]:
-    dash = root / "data" / "dashboard"
+def load_data() -> dict[str, pd.DataFrame]:`r`n    root = APP_ROOT`r`n    dash = root / "data" / "dashboard"
     outputs = root / "outputs" / "csv"
 
     product = load_csv(str(dash / "unimarket_dashboard_product_mart.csv"))
@@ -484,7 +485,7 @@ def normalize_product(df: pd.DataFrame) -> pd.DataFrame:
         out["Name"] = "Producto sin nombre"
 
     if "category_context" not in out.columns:
-        out["category_context"] = "Sin categoría"
+        out["category_context"] = "Sin categorÃ­a"
 
     return out
 
@@ -520,7 +521,7 @@ def build_category_from_product(product: pd.DataFrame) -> pd.DataFrame:
 
 
 # ============================================================
-# GRÁFICAS
+# GRÃFICAS
 # ============================================================
 
 def bar_chart(
@@ -636,22 +637,22 @@ def signed_bar_chart(
 # ============================================================
 
 def sidebar(product: pd.DataFrame, category_summary: pd.DataFrame) -> tuple[str, str, int, pd.DataFrame]:
-    st.sidebar.markdown("# Navegación")
+    st.sidebar.markdown("# NavegaciÃ³n")
 
     section = st.sidebar.selectbox(
-        "Sección",
+        "SecciÃ³n",
         [
             "Resumen ejecutivo",
-            "Categorías y productos",
+            "CategorÃ­as y productos",
             "Productos con utilidad negativa",
-            "Margen bajo y prevención",
-            "Reducciones y pérdida de utilidad",
+            "Margen bajo y prevenciÃ³n",
+            "Reducciones y pÃ©rdida de utilidad",
             "Rentabilidad y COGS",
             "Transacciones y errores",
-            "Catálogo y calidad de datos",
+            "CatÃ¡logo y calidad de datos",
             "Cola priorizada",
             "Recomendaciones ejecutivas",
-            "Metodología y notas",
+            "MetodologÃ­a y notas",
         ],
         index=0,
     )
@@ -659,7 +660,7 @@ def sidebar(product: pd.DataFrame, category_summary: pd.DataFrame) -> tuple[str,
     st.sidebar.markdown("---")
     st.sidebar.markdown("# Filtros")
 
-    ordered_categories = ["Todas las categorías"]
+    ordered_categories = ["Todas las categorÃ­as"]
     if not category_summary.empty:
         ordered_categories += category_summary.sort_values("ventas_netas", ascending=False)["category_context"].astype(str).tolist()
     elif "category_context" in product.columns:
@@ -672,7 +673,7 @@ def sidebar(product: pd.DataFrame, category_summary: pd.DataFrame) -> tuple[str,
         )
 
     category = st.sidebar.selectbox(
-        "Categoría — ordenada de mayor a menor venta",
+        "CategorÃ­a â€” ordenada de mayor a menor venta",
         ordered_categories,
         index=0,
     )
@@ -686,13 +687,13 @@ def sidebar(product: pd.DataFrame, category_summary: pd.DataFrame) -> tuple[str,
     )
 
     filtered = product.copy()
-    if category != "Todas las categorías":
+    if category != "Todas las categorÃ­as":
         filtered = filtered[filtered["category_context"].astype(str).eq(category)]
 
     st.sidebar.markdown("---")
     st.sidebar.caption(
         "Los totales ejecutivos del periodo no cambian con los filtros. "
-        "Las tablas y rankings sí responden a la categoría seleccionada."
+        "Las tablas y rankings sÃ­ responden a la categorÃ­a seleccionada."
     )
 
     return section, category, top_n, filtered
@@ -705,14 +706,14 @@ def sidebar(product: pd.DataFrame, category_summary: pd.DataFrame) -> tuple[str,
 def section_executive(product: pd.DataFrame, category_summary: pd.DataFrame) -> None:
     st.title("UNIMARKET INTELLIGENCE")
     st.markdown(
-        '<div class="subtitle">Financial control · Profitability · Action engine</div>',
+        '<div class="subtitle">Financial control Â· Profitability Â· Action engine</div>',
         unsafe_allow_html=True,
     )
 
     note(
-        "Este dashboard traduce el reporte agregado por producto en indicadores de decisión. "
-        "No declara pérdidas automáticamente cuando falta información; separa pérdida reportada, "
-        "exposición por calidad de datos y oportunidades de revisión."
+        "Este dashboard traduce el reporte agregado por producto en indicadores de decisiÃ³n. "
+        "No declara pÃ©rdidas automÃ¡ticamente cuando falta informaciÃ³n; separa pÃ©rdida reportada, "
+        "exposiciÃ³n por calidad de datos y oportunidades de revisiÃ³n."
     )
 
     gross_sales = safe_sum(product, "gross_sales_final")
@@ -733,7 +734,7 @@ def section_executive(product: pd.DataFrame, category_summary: pd.DataFrame) -> 
     with c2:
         kpi_card("Ventas netas totales", money(net_sales, 2), "Ingreso final reportado.", "kpi-green")
     with c3:
-        kpi_card("Reducción bruta a neta", money(reduction, 2), "Descuentos + refunds − repayments.", "kpi-orange")
+        kpi_card("ReducciÃ³n bruta a neta", money(reduction, 2), "Descuentos + refunds âˆ’ repayments.", "kpi-orange")
 
     c4, c5, c6 = st.columns(3)
     with c4:
@@ -754,18 +755,18 @@ def section_executive(product: pd.DataFrame, category_summary: pd.DataFrame) -> 
     st.markdown("## Lectura ejecutiva")
     note(
         f"El negocio reporta <b>{money(net_sales,2)}</b> en ventas netas y <b>{money(gp,2)}</b> de utilidad bruta. "
-        f"La reducción entre ventas brutas y netas fue de <b>{money(reduction,2)}</b>. "
+        f"La reducciÃ³n entre ventas brutas y netas fue de <b>{money(reduction,2)}</b>. "
         f"Hay <b>{len(negative_df)}</b> productos con utilidad negativa reportada por <b>{money(negative_abs,2)}</b>. "
-        "El análisis recomienda revisar primero productos con utilidad negativa, COGS cero o faltante, "
-        "márgenes bajos y reducciones fuertes de ingreso.",
+        "El anÃ¡lisis recomienda revisar primero productos con utilidad negativa, COGS cero o faltante, "
+        "mÃ¡rgenes bajos y reducciones fuertes de ingreso.",
         warning=False,
     )
 
     if not category_summary.empty:
-        st.markdown("## Categorías más y menos rentables")
+        st.markdown("## CategorÃ­as mÃ¡s y menos rentables")
         st.markdown(
-            '<div class="small-muted">Las barras verdes muestran dónde se concentra la mayor utilidad bruta. '
-            'Las barras naranjas muestran las categorías con menor utilidad positiva. '
+            '<div class="small-muted">Las barras verdes muestran dÃ³nde se concentra la mayor utilidad bruta. '
+            'Las barras naranjas muestran las categorÃ­as con menor utilidad positiva. '
             'Las etiquetas se muestran completas para evitar cortes visuales.</div>',
             unsafe_allow_html=True,
         )
@@ -784,7 +785,7 @@ def section_executive(product: pd.DataFrame, category_summary: pd.DataFrame) -> 
                 top_profitable,
                 x="utilidad_bruta",
                 y="category_context",
-                title="Categorías más rentables",
+                title="CategorÃ­as mÃ¡s rentables",
                 color=COLOR_GREEN,
                 x_title="Utilidad bruta",
                 money_labels=True,
@@ -797,7 +798,7 @@ def section_executive(product: pd.DataFrame, category_summary: pd.DataFrame) -> 
                 less_profitable,
                 x="utilidad_bruta",
                 y="category_context",
-                title="Categorías menos rentables",
+                title="CategorÃ­as menos rentables",
                 color=COLOR_ORANGE,
                 x_title="Utilidad bruta",
                 money_labels=True,
@@ -805,12 +806,12 @@ def section_executive(product: pd.DataFrame, category_summary: pd.DataFrame) -> 
             )
             st.plotly_chart(fig, use_container_width=True)
 
-        st.markdown("## Categorías por ventas netas")
+        st.markdown("## CategorÃ­as por ventas netas")
         fig = bar_chart(
             category_summary.sort_values("ventas_netas", ascending=False).head(25),
             x="ventas_netas",
             y="category_context",
-            title="Ventas netas por categoría",
+            title="Ventas netas por categorÃ­a",
             color=COLOR_BLUE,
             x_title="Ventas netas",
             money_labels=True,
@@ -819,11 +820,11 @@ def section_executive(product: pd.DataFrame, category_summary: pd.DataFrame) -> 
 
 
 def section_categories(filtered: pd.DataFrame, product: pd.DataFrame, category: str, top_n: int) -> None:
-    st.title("Categorías y productos")
+    st.title("CategorÃ­as y productos")
 
     note(
-        "Primero se revisa la categoría de mayor a menor venta. Después, dentro de cada categoría, "
-        "se comparan productos más vendidos, menos vendidos, mayor utilidad, menor utilidad y margen bajo."
+        "Primero se revisa la categorÃ­a de mayor a menor venta. DespuÃ©s, dentro de cada categorÃ­a, "
+        "se comparan productos mÃ¡s vendidos, menos vendidos, mayor utilidad, menor utilidad y margen bajo."
     )
 
     data = filtered.copy()
@@ -835,27 +836,27 @@ def section_categories(filtered: pd.DataFrame, product: pd.DataFrame, category: 
 
     c1, c2, c3, c4 = st.columns(4)
     with c1:
-        kpi_card("Ventas netas", money(net, 2), "Ventas de la selección.", "kpi-green")
+        kpi_card("Ventas netas", money(net, 2), "Ventas de la selecciÃ³n.", "kpi-green")
     with c2:
         kpi_card("Utilidad bruta", money(gp, 2), "Ganancia antes de gastos operativos.", "kpi-green" if gp >= 0 else "kpi-red")
     with c3:
         kpi_card("Margen bruto", pct(margin, 2), "Utilidad / ventas netas.")
     with c4:
-        kpi_card("Productos", number(len(data)), "Productos en la selección.")
+        kpi_card("Productos", number(len(data)), "Productos en la selecciÃ³n.")
 
     tabs = st.tabs(
         [
-            "Más vendidos",
+            "MÃ¡s vendidos",
             "Menos vendidos",
             "Mayor utilidad",
-            "Menor utilidad / pérdida",
-            "Margen más bajo",
+            "Menor utilidad / pÃ©rdida",
+            "Margen mÃ¡s bajo",
         ]
     )
 
     with tabs[0]:
         top = data.sort_values("net_sales_final", ascending=False).head(top_n)
-        fig = bar_chart(top, "net_sales_final", "Name", f"Top {top_n} productos más vendidos", COLOR_GREEN)
+        fig = bar_chart(top, "net_sales_final", "Name", f"Top {top_n} productos mÃ¡s vendidos", COLOR_GREEN)
         st.plotly_chart(fig, use_container_width=True)
         st.dataframe(format_table(top), use_container_width=True, hide_index=True)
 
@@ -873,7 +874,7 @@ def section_categories(filtered: pd.DataFrame, product: pd.DataFrame, category: 
 
     with tabs[3]:
         loss = data.sort_values("gross_profit_final", ascending=True).head(top_n)
-        fig = signed_bar_chart(loss, "gross_profit_final", "Name", f"Top {top_n} productos con menor utilidad o pérdida")
+        fig = signed_bar_chart(loss, "gross_profit_final", "Name", f"Top {top_n} productos con menor utilidad o pÃ©rdida")
         st.plotly_chart(fig, use_container_width=True)
         st.dataframe(format_table(loss), use_container_width=True, hide_index=True)
 
@@ -889,7 +890,7 @@ def section_categories(filtered: pd.DataFrame, product: pd.DataFrame, category: 
             margin_df,
             x=margin_col,
             y="Name",
-            title=f"Top {top_n} productos con margen más bajo",
+            title=f"Top {top_n} productos con margen mÃ¡s bajo",
             color=COLOR_RED,
             x_title="Margen bruto %",
             money_labels=False,
@@ -902,8 +903,8 @@ def section_negative(product: pd.DataFrame, top_n: int) -> None:
     st.title("Productos con utilidad negativa")
 
     note(
-        "Aquí se listan productos donde la utilidad bruta reportada es menor que cero. "
-        "En palabras simples: después de considerar ventas netas y costo registrado, el producto aparece perdiendo dinero."
+        "AquÃ­ se listan productos donde la utilidad bruta reportada es menor que cero. "
+        "En palabras simples: despuÃ©s de considerar ventas netas y costo registrado, el producto aparece perdiendo dinero."
     )
 
     data = product[pd.to_numeric(product.get("gross_profit_final", 0), errors="coerce") < 0].copy()
@@ -914,9 +915,9 @@ def section_negative(product: pd.DataFrame, top_n: int) -> None:
     with c1:
         kpi_card("Productos negativos", number(len(data)), "Cantidad de productos con utilidad negativa.", "kpi-red")
     with c2:
-        kpi_card("Pérdida reportada", money(safe_sum(data, "perdida_abs"), 2), "Suma absoluta de utilidad negativa.", "kpi-red")
+        kpi_card("PÃ©rdida reportada", money(safe_sum(data, "perdida_abs"), 2), "Suma absoluta de utilidad negativa.", "kpi-red")
     with c3:
-        kpi_card("Mayor pérdida individual", money(data["perdida_abs"].max() if not data.empty else 0, 2), "Producto más crítico.", "kpi-red")
+        kpi_card("Mayor pÃ©rdida individual", money(data["perdida_abs"].max() if not data.empty else 0, 2), "Producto mÃ¡s crÃ­tico.", "kpi-red")
 
     if data.empty:
         st.info("No hay productos con utilidad negativa para los filtros actuales.")
@@ -926,9 +927,9 @@ def section_negative(product: pd.DataFrame, top_n: int) -> None:
         data.head(top_n),
         x="perdida_abs",
         y="Name",
-        title=f"Top {top_n} productos con mayor pérdida reportada",
+        title=f"Top {top_n} productos con mayor pÃ©rdida reportada",
         color=COLOR_RED,
-        x_title="Pérdida absoluta",
+        x_title="PÃ©rdida absoluta",
         money_labels=True,
     )
     st.plotly_chart(fig, use_container_width=True)
@@ -937,11 +938,11 @@ def section_negative(product: pd.DataFrame, top_n: int) -> None:
 
 
 def section_low_margin(product: pd.DataFrame, top_n: int) -> None:
-    st.title("Margen bajo y prevención")
+    st.title("Margen bajo y prevenciÃ³n")
 
     note(
         "Un producto puede no estar perdiendo dinero, pero tener un margen tan bajo que deja muy poco espacio "
-        "para cubrir renta, nómina, desperdicio, comisiones o errores de precio."
+        "para cubrir renta, nÃ³mina, desperdicio, comisiones o errores de precio."
     )
 
     data = product.copy()
@@ -958,7 +959,7 @@ def section_low_margin(product: pd.DataFrame, top_n: int) -> None:
     with c2:
         kpi_card("Ventas asociadas", money(safe_sum(low, "net_sales_final"), 2), "Ventas en productos con margen bajo.", "kpi-orange")
     with c3:
-        kpi_card("Margen mínimo", pct(low["gross_margin_pct_final"].min() if not low.empty else 0), "Menor margen encontrado.", "kpi-orange")
+        kpi_card("Margen mÃ­nimo", pct(low["gross_margin_pct_final"].min() if not low.empty else 0), "Menor margen encontrado.", "kpi-orange")
 
     if low.empty:
         st.info("No hay productos de margen bajo con los filtros actuales.")
@@ -968,7 +969,7 @@ def section_low_margin(product: pd.DataFrame, top_n: int) -> None:
         low.head(top_n),
         x="gross_margin_pct_final",
         y="Name",
-        title=f"Top {top_n} productos con margen más bajo",
+        title=f"Top {top_n} productos con margen mÃ¡s bajo",
         color=COLOR_ORANGE,
         x_title="Margen bruto %",
         money_labels=False,
@@ -979,11 +980,11 @@ def section_low_margin(product: pd.DataFrame, top_n: int) -> None:
 
 
 def section_reductions(product: pd.DataFrame, top_n: int) -> None:
-    st.title("Reducciones y pérdida de utilidad")
+    st.title("Reducciones y pÃ©rdida de utilidad")
 
     note(
-        "Esta sección muestra productos donde las ventas brutas se reducen por descuentos, refunds o ajustes. "
-        "No todo descuento es malo, pero descuentos altos pueden convertir un producto rentable en uno de bajo margen o pérdida."
+        "Esta secciÃ³n muestra productos donde las ventas brutas se reducen por descuentos, refunds o ajustes. "
+        "No todo descuento es malo, pero descuentos altos pueden convertir un producto rentable en uno de bajo margen o pÃ©rdida."
     )
 
     data = product.copy()
@@ -992,7 +993,7 @@ def section_reductions(product: pd.DataFrame, top_n: int) -> None:
 
     c1, c2, c3 = st.columns(3)
     with c1:
-        kpi_card("Reducción total", money(safe_sum(data, "reduction_abs"), 2), "Gross Sales - Net Sales.", "kpi-orange")
+        kpi_card("ReducciÃ³n total", money(safe_sum(data, "reduction_abs"), 2), "Gross Sales - Net Sales.", "kpi-orange")
     with c2:
         kpi_card("Descuentos", money(safe_sum(product, "discount_reduction_final"), 2), "Descuentos aplicados.", "kpi-orange")
     with c3:
@@ -1006,9 +1007,9 @@ def section_reductions(product: pd.DataFrame, top_n: int) -> None:
         data.head(top_n),
         x="reduction_abs",
         y="Name",
-        title=f"Top {top_n} productos con mayor reducción bruta a neta",
+        title=f"Top {top_n} productos con mayor reducciÃ³n bruta a neta",
         color=COLOR_ORANGE,
-        x_title="Reducción bruta a neta",
+        x_title="ReducciÃ³n bruta a neta",
         money_labels=True,
     )
     st.plotly_chart(fig, use_container_width=True)
@@ -1021,8 +1022,8 @@ def section_cogs(product: pd.DataFrame, top_n: int) -> None:
 
     note(
         "COGS es el costo del producto vendido. Si un producto aparece con COGS cero o sin COGS, "
-        "la utilidad puede verse mejor de lo real. Esta sección habla de riesgo de calidad de datos, "
-        "no de pérdida confirmada."
+        "la utilidad puede verse mejor de lo real. Esta secciÃ³n habla de riesgo de calidad de datos, "
+        "no de pÃ©rdida confirmada."
     )
 
     cogs = pd.to_numeric(product.get("cogs_final", None), errors="coerce")
@@ -1045,7 +1046,7 @@ def section_cogs(product: pd.DataFrame, top_n: int) -> None:
     tabs = st.tabs(["COGS cero", "COGS faltante"])
     with tabs[0]:
         if zero.empty:
-            st.info("No hay productos con COGS cero en la selección.")
+            st.info("No hay productos con COGS cero en la selecciÃ³n.")
         else:
             zero = zero.sort_values("net_sales_final", ascending=False).head(top_n)
             fig = bar_chart(zero, "net_sales_final", "Name", f"Top {top_n} ventas con COGS cero", COLOR_ORANGE)
@@ -1054,7 +1055,7 @@ def section_cogs(product: pd.DataFrame, top_n: int) -> None:
 
     with tabs[1]:
         if missing.empty:
-            st.info("No hay productos con COGS faltante en la selección.")
+            st.info("No hay productos con COGS faltante en la selecciÃ³n.")
         else:
             missing = missing.sort_values("net_sales_final", ascending=False).head(top_n)
             fig = bar_chart(missing, "net_sales_final", "Name", f"Top {top_n} ventas sin COGS", COLOR_ORANGE)
@@ -1066,8 +1067,8 @@ def section_transactions(product: pd.DataFrame) -> None:
     st.title("Transacciones y errores")
 
     note(
-        "Las transacciones manuales negativas deben revisarse contra recibos, devoluciones, ajustes y autorización. "
-        "No se declaran automáticamente como pérdida porque el dataset está agregado por producto."
+        "Las transacciones manuales negativas deben revisarse contra recibos, devoluciones, ajustes y autorizaciÃ³n. "
+        "No se declaran automÃ¡ticamente como pÃ©rdida porque el dataset estÃ¡ agregado por producto."
     )
 
     name = product.get("Name", pd.Series(dtype=str)).astype(str).str.lower()
@@ -1088,16 +1089,16 @@ def section_transactions(product: pd.DataFrame) -> None:
 
 
 def section_catalog(product: pd.DataFrame, top_n: int) -> None:
-    st.title("Catálogo y calidad de datos")
+    st.title("CatÃ¡logo y calidad de datos")
 
     note(
-        "Identifica productos posiblemente duplicados, mal etiquetados, con presentación confusa o que requieren revisión de SKU/UPC. "
-        "No significa pérdida directa, pero puede causar errores de precio, costo, inventario o análisis."
+        "Identifica productos posiblemente duplicados, mal etiquetados, con presentaciÃ³n confusa o que requieren revisiÃ³n de SKU/UPC. "
+        "No significa pÃ©rdida directa, pero puede causar errores de precio, costo, inventario o anÃ¡lisis."
     )
 
     reason_col = first_existing(product, ["catalog_review_reason_corrected", "catalog_review_reason", "catalog_finding_class"])
     if reason_col is None:
-        st.info("No hay columna de razón de catálogo disponible.")
+        st.info("No hay columna de razÃ³n de catÃ¡logo disponible.")
         return
 
     reason = product[reason_col].astype(str)
@@ -1108,12 +1109,12 @@ def section_catalog(product: pd.DataFrame, top_n: int) -> None:
 
     c1, c2 = st.columns(2)
     with c1:
-        kpi_card("Registros de catálogo a revisar", number(len(catalog)), "Productos con posible problema de catálogo.", "kpi-orange")
+        kpi_card("Registros de catÃ¡logo a revisar", number(len(catalog)), "Productos con posible problema de catÃ¡logo.", "kpi-orange")
     with c2:
         kpi_card("Ventas asociadas", money(safe_sum(catalog, "net_sales_final"), 2), "Ventas relacionadas con estos registros.", "kpi-orange")
 
     if catalog.empty:
-        st.info("No hay hallazgos de catálogo en la selección.")
+        st.info("No hay hallazgos de catÃ¡logo en la selecciÃ³n.")
         return
 
     catalog = catalog.sort_values("net_sales_final", ascending=False).head(top_n)
@@ -1124,11 +1125,11 @@ def section_queue(product: pd.DataFrame, top_n: int) -> None:
     st.title("Cola priorizada")
 
     note(
-        "Esta cola ordena productos para revisar primero. La prioridad combina impacto financiero, pérdida, margen bajo, "
-        "reducciones, calidad de costos y catálogo."
+        "Esta cola ordena productos para revisar primero. La prioridad combina impacto financiero, pÃ©rdida, margen bajo, "
+        "reducciones, calidad de costos y catÃ¡logo."
     )
 
-    priority_order = {"Crítica": 0, "Alta": 1, "Media": 2, "Baja": 3, "Sin prioridad": 4}
+    priority_order = {"CrÃ­tica": 0, "Alta": 1, "Media": 2, "Baja": 3, "Sin prioridad": 4}
     data = product.copy()
     data["priority_rank"] = data["priority_readable"].map(priority_order).fillna(9)
     data["impact"] = (
@@ -1141,9 +1142,9 @@ def section_queue(product: pd.DataFrame, top_n: int) -> None:
 
     c1, c2, c3 = st.columns(3)
     with c1:
-        kpi_card("Productos en cola", number(len(data)), "Productos visibles según filtros.")
+        kpi_card("Productos en cola", number(len(data)), "Productos visibles segÃºn filtros.")
     with c2:
-        kpi_card("Críticos / altos", number(data["priority_readable"].isin(["Crítica", "Alta"]).sum()), "Máxima prioridad.")
+        kpi_card("CrÃ­ticos / altos", number(data["priority_readable"].isin(["CrÃ­tica", "Alta"]).sum()), "MÃ¡xima prioridad.")
     with c3:
         kpi_card("Ventas asociadas", money(safe_sum(data, "net_sales_final"), 2), "Ventas de la cola visible.")
 
@@ -1156,25 +1157,25 @@ def section_recommendations() -> None:
     st.markdown(
         """
         ### 1. Revisar productos con utilidad negativa
-        Confirmar precio de venta, costo unitario, descuentos aplicados y refunds. Estos productos son la primera prioridad porque ya aparecen con pérdida reportada.
+        Confirmar precio de venta, costo unitario, descuentos aplicados y refunds. Estos productos son la primera prioridad porque ya aparecen con pÃ©rdida reportada.
 
         ### 2. Corregir COGS cero o faltante
-        Un producto sin costo puede inflar artificialmente la utilidad. Antes de tomar decisiones de precios, el catálogo debe tener costos confiables.
+        Un producto sin costo puede inflar artificialmente la utilidad. Antes de tomar decisiones de precios, el catÃ¡logo debe tener costos confiables.
 
         ### 3. Controlar descuentos y refunds
-        Separar descuentos comerciales normales de descuentos que destruyen margen. Revisar productos donde la reducción bruta a neta es alta.
+        Separar descuentos comerciales normales de descuentos que destruyen margen. Revisar productos donde la reducciÃ³n bruta a neta es alta.
 
-        ### 4. Depurar catálogo
-        Revisar duplicados, packs, unidades, tamaños y SKU/UPC. Un catálogo confuso puede generar errores de precio, inventario y rentabilidad.
+        ### 4. Depurar catÃ¡logo
+        Revisar duplicados, packs, unidades, tamaÃ±os y SKU/UPC. Un catÃ¡logo confuso puede generar errores de precio, inventario y rentabilidad.
 
         ### 5. Solicitar data transaccional completa
-        Para una auditoría precisa se necesita información por fecha, ticket, empleado, canal de venta, método de pago, descuentos autorizados, refunds, inventario y costo histórico.
+        Para una auditorÃ­a precisa se necesita informaciÃ³n por fecha, ticket, empleado, canal de venta, mÃ©todo de pago, descuentos autorizados, refunds, inventario y costo histÃ³rico.
         """
     )
 
 
 def section_methodology() -> None:
-    st.title("Metodología y notas")
+    st.title("MetodologÃ­a y notas")
 
     st.markdown(
         """
@@ -1182,29 +1183,29 @@ def section_methodology() -> None:
 
         **Gross Sales / Ventas brutas:** valor vendido antes de descuentos, devoluciones o ajustes.
 
-        **Net Sales / Ventas netas:** valor final después de descuentos, refunds y repayments.
+        **Net Sales / Ventas netas:** valor final despuÃ©s de descuentos, refunds y repayments.
 
         **COGS:** costo del producto vendido. Es lo que le cuesta al negocio vender ese producto.
 
         **Gross Profit / Utilidad bruta:** ventas netas menos COGS.
 
-        **Gross Margin / Margen bruto:** porcentaje de utilidad que queda después del costo.
+        **Gross Margin / Margen bruto:** porcentaje de utilidad que queda despuÃ©s del costo.
 
-        **Reducción bruta a neta:** diferencia entre Gross Sales y Net Sales. Incluye descuentos, refunds y repayments.
+        **ReducciÃ³n bruta a neta:** diferencia entre Gross Sales y Net Sales. Incluye descuentos, refunds y repayments.
 
         **COGS cero:** producto vendido que aparece con costo igual a cero. Puede inflar la utilidad.
 
-        **Rentabilidad incompleta:** producto sin costo o utilidad completa. No permite saber con precisión si gana o pierde.
+        **Rentabilidad incompleta:** producto sin costo o utilidad completa. No permite saber con precisiÃ³n si gana o pierde.
 
-        **Anomalía de configuración:** inconsistencia entre costo, utilidad y margen reportado.
+        **AnomalÃ­a de configuraciÃ³n:** inconsistencia entre costo, utilidad y margen reportado.
 
         ## Nota importante
 
-        El dataset es un reporte agregado por producto. Por eso no permite atribuir pérdidas a fechas, empleados, turnos o transacciones específicas sin tener la data transaccional completa.
+        El dataset es un reporte agregado por producto. Por eso no permite atribuir pÃ©rdidas a fechas, empleados, turnos o transacciones especÃ­ficas sin tener la data transaccional completa.
 
-        ## Qué datos faltan para una auditoría precisa
+        ## QuÃ© datos faltan para una auditorÃ­a precisa
 
-        Fecha y hora de cada venta, ticket, empleado, canal, descuentos autorizados, refunds, método de pago, costo histórico, inventario inicial/final, compras, merma y cambios de precio.
+        Fecha y hora de cada venta, ticket, empleado, canal, descuentos autorizados, refunds, mÃ©todo de pago, costo histÃ³rico, inventario inicial/final, compras, merma y cambios de precio.
         """
     )
 
@@ -1216,16 +1217,16 @@ def section_methodology() -> None:
 def main() -> None:
     inject_css()
 
-    st.sidebar.markdown("## Configuración")
-    root_input = st.sidebar.text_input("Ruta raíz del proyecto", value=str(DEFAULT_ROOT))
+    st.sidebar.markdown("## ConfiguraciÃ³n")
+    root_input = st.sidebar.text_input("Ruta raÃ­z del proyecto", value=str(DEFAULT_ROOT))
     root = Path(root_input)
 
-    data = load_data(root)
+    data = load_data()
     product = normalize_product(data["product"])
 
     if product.empty:
         st.error(
-            "No se encontró el product mart del dashboard. Verifica que exista: "
+            "No se encontrÃ³ el product mart del dashboard. Verifica que exista: "
             "data/dashboard/unimarket_dashboard_product_mart.csv"
         )
         st.stop()
@@ -1236,29 +1237,30 @@ def main() -> None:
 
     if section == "Resumen ejecutivo":
         section_executive(product, category_summary)
-    elif section == "Categorías y productos":
+    elif section == "CategorÃ­as y productos":
         section_categories(filtered, product, category, top_n)
     elif section == "Productos con utilidad negativa":
         section_negative(filtered, top_n)
-    elif section == "Margen bajo y prevención":
+    elif section == "Margen bajo y prevenciÃ³n":
         section_low_margin(filtered, top_n)
-    elif section == "Reducciones y pérdida de utilidad":
+    elif section == "Reducciones y pÃ©rdida de utilidad":
         section_reductions(filtered, top_n)
     elif section == "Rentabilidad y COGS":
         section_cogs(filtered, top_n)
     elif section == "Transacciones y errores":
         section_transactions(filtered)
-    elif section == "Catálogo y calidad de datos":
+    elif section == "CatÃ¡logo y calidad de datos":
         section_catalog(filtered, top_n)
     elif section == "Cola priorizada":
         section_queue(filtered, top_n)
     elif section == "Recomendaciones ejecutivas":
         section_recommendations()
-    elif section == "Metodología y notas":
+    elif section == "MetodologÃ­a y notas":
         section_methodology()
 
-    st.caption(f"UNIMARKET LATIN FOOD · {APP_VERSION}")
+    st.caption(f"UNIMARKET LATIN FOOD Â· {APP_VERSION}")
 
 
 if __name__ == "__main__":
     main()
+
